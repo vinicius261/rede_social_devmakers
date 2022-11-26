@@ -38,7 +38,7 @@ public class RedeSocial {
         }
     }
 
-    private static void menuDoUsuario(Perfil usuarioLogado) {
+    public static void menuDoUsuario(Perfil usuarioLogado) {
         System.out.println("================================================================");
         System.out.println("Bem vindo, " + usuarioLogado.nome + "!");
         System.out.println();
@@ -94,7 +94,7 @@ public class RedeSocial {
         }
     }
 
-    private static void fazerPostagem(Perfil autor) {
+    public static void fazerPostagem(Perfil autor) {
         System.out.println("Vamos registrar a data da postagem: ");
         String data = dataPostagem();
 
@@ -111,7 +111,7 @@ public class RedeSocial {
         menuDoUsuario(perfilQueEstaLogado);
     }
 
-    private static void menuDePerfis(Perfil usuario) {
+    public static void menuDePerfis(Perfil usuario) {
         System.out.println("============================================");
         System.out.println("Para ver em detalhes desse perfil escolha uma opção: ");
         System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguidos    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + usuario.nome);
@@ -133,7 +133,7 @@ public class RedeSocial {
         }
     }
 
-    private static void exibePerfil(Perfil usuario) {
+    public static void exibePerfil(Perfil usuario) {
         System.out.println("============================================");
         System.out.println("Perfil de " + usuario.nome);
         System.out.println();
@@ -179,7 +179,7 @@ public class RedeSocial {
         menuDePerfis(usuario);
     }
 
-    private static void login() {
+    public static void login() {
         System.out.println("Insira seu login: ");
         String login = sc.nextLine();
         if (usuarios.isEmpty()) {
@@ -224,7 +224,7 @@ public class RedeSocial {
         }
     }
 
-    private static void novoUsuario() {
+    public static void novoUsuario() {
         System.out.println("Insira seu email: ");
         String login = recebeEmail();
         System.out.println("Insira seu nome: ");
@@ -251,7 +251,7 @@ public class RedeSocial {
 
 
 
-    private static void postagens(Perfil usuario) {
+    public static void postagens(Perfil usuario) {
         System.out.println("============================================");
         System.out.println("Postagens de " + usuario.nome);
         System.out.println();
@@ -299,7 +299,7 @@ public class RedeSocial {
         }
     }
 
-    private static void seguridores(Perfil usuario) {
+    public static void seguridores(Perfil usuario) {
         System.out.println("============================================");
         if (usuario.seguidoPor.isEmpty()) {
             System.out.println("O usuário ainda não tem seguidores.");
@@ -315,7 +315,7 @@ public class RedeSocial {
         System.out.println("============================================");
         menuDePerfis(usuario);
     }
-    private static void seguidos(Perfil usuario) {
+    public static void seguidos(Perfil usuario) {
         System.out.println("============================================");
         if (usuario.seguidoPor.isEmpty()) {
             System.out.println("O usuário ainda não segue ninguém.");
@@ -331,7 +331,7 @@ public class RedeSocial {
         menuDePerfis(usuario);
     }
 
-    private static void pesquisaUsuários(Perfil usuarioLogado) {
+    public static void pesquisaUsuários(Perfil usuarioLogado) {
         System.out.println("Digite um nome ou um começo de nome: ");
         String busca = sc.nextLine();
         boolean usuarioEncontrado = false;
@@ -357,7 +357,7 @@ public class RedeSocial {
         }
     }
 
-    private static void adicionaUsuario(Perfil usuario) {
+    public static void adicionaUsuario(Perfil usuario) {
         if (usuario != perfilQueEstaLogado && !(perfilQueEstaLogado.segue.contains(usuario))) {
             perfilQueEstaLogado.segue.add(usuario);
             usuario.seguidoPor.add(perfilQueEstaLogado);
@@ -372,7 +372,7 @@ public class RedeSocial {
         exibePerfil(usuario);
     }
 
-    private static void criaPerfisAutomaticamente() {
+    public static void criaPerfisAutomaticamente() {
         String[] emails = {"caio@gmail.com", "celia@gmail.com", "cassio@gmail.com"};
         String[] nomes = {"Caio Santos", "Celia Garcia", "Cassio Ramos"};
         String[] senhas = {"123456", "123456", "123456"};
@@ -383,13 +383,13 @@ public class RedeSocial {
         }
     }
 
-    private static void curtirPost(Post post) {
+    public static void curtirPost(Post post) {
         post.curtidas += 1;
         System.out.println("Curtido!");
         System.out.println();
     }
 
-    private static void comentarPost(Post post, String comentario, Perfil autorDoComentario) {
+    public static void comentarPost(Post post, String comentario, Perfil autorDoComentario) {
         post.comentarios.add(autorDoComentario.nome + " - " + comentario);
     }
 
