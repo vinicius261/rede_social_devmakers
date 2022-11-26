@@ -59,19 +59,6 @@ public class RedeSocial {
         } else {
             menuInicial();
         }
-
-       /* System.out.println("Suas postagens :");
-        for (Post post : usuarioLogado.posts) {
-            System.out.println(post.data + " - " + post.hora);
-            System.out.println(post.texto);
-            System.out.println();
-        }
-
-        System.out.println("Seus seguidores: ");
-        for (Perfil seguidor : usuarioLogado.seguidoPor) {
-            System.out.println(seguidor.nome);
-            System.out.println();
-        }*/
     }
 
     public static void criaTimeline(Perfil usuario) {
@@ -686,6 +673,5 @@ public class RedeSocial {
             recebeAcaoPostagem();
         }
         return acao;
-
     }
 }

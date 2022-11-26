@@ -9,10 +9,8 @@ public class Perfil {
     ArrayList<Perfil> segue = new ArrayList();
 
     public Perfil(String login, String nome, String senha) {
-
         this.login = login;
         this.nome = nome;
         this.senha = senha;
-
     }
 }
