@@ -33,7 +33,13 @@ public class RedeSocial {
         }
 
         if (opcao == 1) {
-            login();
+            try {
+                login();
+            } catch (UserNotFoundException | InvalidPasswordException e) {
+            System.out.println(e.getMessage());
+            System.out.println();
+            menuInicial();
+        }
         } else if (opcao == 2) {
             novoUsuario();
         } else {
@@ -173,7 +179,6 @@ public class RedeSocial {
             System.out.println();
             menuInicial();
         } else {
-            try {
                 boolean usuarioEncontrado = false;
                 for (int i = 0; i < usuarios.size(); i++) {
                     if (usuarios.get(i).login.equalsIgnoreCase(login)) {
@@ -202,11 +207,6 @@ public class RedeSocial {
                     if (usuarioEncontrado == false) {
                             throw new UserNotFoundException("Usuário não encontrado.");
                         }
-            } catch (UserNotFoundException | InvalidPasswordException e) {
-                System.out.println(e.getMessage());
-                System.out.println();
-                menuInicial();
-            }
         }
     }
 
