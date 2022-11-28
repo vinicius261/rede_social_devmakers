@@ -1,5 +1,5 @@
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Validacoes {
@@ -60,10 +60,10 @@ public class Validacoes {
 
     public static String criaSenha() {
         String senha = sc.nextLine();
-        if (senha.length() < 6 || senha.isEmpty()) {
+        if (senha.length() < 6) {
             System.out.println("A senha deve conter pelo menos 6 caracteres, tente novamente.");
             senha = sc.nextLine();
-            if (senha.length() < 6 || senha.isEmpty()) {
+            if (senha.length() < 6) {
                 senha = "ERRO";
             }
         }
@@ -137,7 +137,7 @@ public class Validacoes {
         return numero;
     }
 
-    public static int recebePosicao(Perfil tamanhoArray) {
+    public static int recebePosicao(ArrayList tamanhoArray) {
         int posicao = 0;
 
         try {
@@ -147,12 +147,12 @@ public class Validacoes {
             posicao = recebePosicao(tamanhoArray);
         }
 
-        while (posicao < tamanhoArray.segue.size()) {
+        while (posicao > tamanhoArray.size()) {
             System.out.println("Digite um número válido.");
-            recebePosicao(tamanhoArray);
+            posicao = recebePosicao(tamanhoArray);
+            posicao++;
         }
         return posicao - 1;
-
     }
 
     public static int recebeAcaoPostagem() {
@@ -167,15 +167,9 @@ public class Validacoes {
 
         while (acao < 1 || acao > 4) {
             System.out.println("Digite um número válido.");
-            recebeAcaoPostagem();
+            acao = recebeAcaoPostagem();
         }
         return acao;
-    }
-
-    public static Date criaData() {
-        SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-        Date data = new Date(System.currentTimeMillis());
-        return data;
     }
 }
 

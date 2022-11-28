@@ -1,8 +1,5 @@
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -11,8 +8,9 @@ public class RedeSocial {
     // Olá Alan! Existe um método que adiciona três perfis assim que você cadastra o primeiro usuário.
 // Assim pode usar as funções extras de busca de usuário, seguir, comentar e curtir com menos trabalho.
 //Esses usuários começam com a letra "c", use ela para fazer as buscas. Valeu!
-    static ArrayList<Perfil> usuarios = new ArrayList();
+    static ArrayList<Perfil> usuarios = new ArrayList<>();
     static Perfil perfilQueEstaLogado;
+    static SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
     public static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -58,7 +56,7 @@ public class RedeSocial {
         } else if (opcao == 2) {
             criaTimeline(usuarioLogado);
         } else if (opcao == 3) {
-            pesquisaUsuários(usuarioLogado);
+            pesquisaUsuarios();
         } else if (opcao == 4) {
             exibePerfil(usuarioLogado);
         } else {
@@ -66,84 +64,82 @@ public class RedeSocial {
         }
     }
 
-    public static void criaTimeline(Perfil usuario) {
+    public static void criaTimeline(Perfil usuarioLogado) {
         System.out.println("================================================================");
         System.out.println("Suas publicações:");
         System.out.println();
 
-        if (usuario.posts.isEmpty()) {
+        if (usuarioLogado.posts.isEmpty()) {
             System.out.println("Faça sua primeira publicação.");
             System.out.println();
-            menuDoUsuario(usuario);
+            menuDoUsuario(usuarioLogado);
         } else {
-            SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-            for (Post post : usuario.posts) {
-                System.out.println(formatter.format(post.data) + " - " + "'" + post.texto + "'");
+            for (Post post : usuarioLogado.posts) {
+                System.out.println(dataFormatada.format(post.data) + " - " + "'" + post.texto + "'");
             }
             System.out.println();
             System.out.println("================================================================");
             System.out.println();
-            menuDoUsuario(usuario);
+            menuDoUsuario(usuarioLogado);
         }
     }
 
-    public static void fazerPostagem(Perfil autor) {
-        Date data = Validacoes.criaData();
+    public static void fazerPostagem(Perfil usuarioLogado) {
+        Date data = criaData();
 
         System.out.println("No que esta pensando? ");
         String texto = sc.nextLine();
 
-        new Post(autor, data, texto);
+        new Post(usuarioLogado, data, texto);
         System.out.println("Publicado!");
         System.out.println();
 
-        menuDoUsuario(perfilQueEstaLogado);
+        menuDoUsuario(usuarioLogado);
     }
 
-    public static void menuDePerfis(Perfil usuario) {
+    public static void menuDePerfis(Perfil perfilVisitado) {
         System.out.println("============================================");
         System.out.println("Para ver em detalhes desse perfil escolha uma opção: ");
-        System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguidos    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + usuario.nome);
+        System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguidos    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + perfilVisitado.nome);
         System.out.println("============================================");
         int opcao = Validacoes.respostaMenu();
 
         if (opcao == 1) {
-            postagens(usuario);
+            postagens(perfilVisitado);
         } else if (opcao == 2) {
-            seguridores(usuario);
+            seguridores(perfilVisitado);
         } else if (opcao == 3) {
-            seguidos(usuario);
+            seguidos(perfilVisitado);
         } else if (opcao == 4) {
-            adicionaUsuario(usuario);
+            adicionaUsuario(perfilVisitado);
         } else if (opcao == 5) {
             menuDoUsuario(perfilQueEstaLogado);
         } else {
-            exibePerfil(usuario);
+            exibePerfil(perfilVisitado);
         }
     }
 
-    public static void exibePerfil(Perfil usuario) {
+    public static void exibePerfil(Perfil perfilVisitado) {
         System.out.println("============================================");
-        System.out.println("Perfil de " + usuario.nome);
+        System.out.println("Perfil de " + perfilVisitado.nome);
         System.out.println();
 
-        System.out.println("Postagens de " + usuario.nome);
+        System.out.println("Postagens de " + perfilVisitado.nome);
         System.out.println();
 
-        if (usuario.posts.size() > 0) {
-            SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-            for (Post post : usuario.posts) {
-                System.out.println("        " + formatter.format(post.data) +" - " + post.texto);
+        if (perfilVisitado.posts.size() > 0) {
+            for (Post post : perfilVisitado.posts) {
+                System.out.println("        " + dataFormatada.format(post.data) +" - " + post.texto);
                 System.out.println();
             }
         } else {
             System.out.println("        O usuário ainda não tem postagens.");
             System.out.println();
         }
-        System.out.println("Seguidores de " + usuario.nome);
+        System.out.println("Seguidores de " + perfilVisitado.nome);
         System.out.println();
-        if (usuario.seguidoPor.size() > 0) {
-            for (Perfil seguidor : usuario.seguidoPor) {
+        if (perfilVisitado.seguidoPor.size() > 0) {
+            for (Perfil seguidor : perfilVisitado.seguidoPor) {
                 System.out.println("        " + seguidor.nome);
                 System.out.println();
             }
@@ -152,11 +148,11 @@ public class RedeSocial {
             System.out.println();
         }
 
-        System.out.println(usuario.nome + " segue:");
+        System.out.println(perfilVisitado.nome + " segue:");
         System.out.println();
 
-        if (usuario.segue.size() > 0) {
-            for (Perfil segue : usuario.segue) {
+        if (perfilVisitado.segue.size() > 0) {
+            for (Perfil segue : perfilVisitado.segue) {
                 System.out.println("        " + segue.nome);
                 System.out.println();
             }
@@ -166,7 +162,7 @@ public class RedeSocial {
         }
 
         System.out.println("============================================");
-        menuDePerfis(usuario);
+        menuDePerfis(perfilVisitado);
     }
 
     public static void login() {
@@ -239,15 +235,13 @@ public class RedeSocial {
         }
     }
 
-
-    public static void postagens(Perfil usuario) {
+    public static void postagens(Perfil perfilVisitado) {
         System.out.println("============================================");
-        System.out.println("Postagens de " + usuario.nome);
+        System.out.println("Postagens de " + perfilVisitado.nome);
         System.out.println();
 
-        for (Post post : usuario.posts) {
-            SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-            System.out.println(formatter.format(post.data));
+        for (Post post : perfilVisitado.posts) {
+            System.out.println(dataFormatada.format(post.data));
             System.out.println(post.texto);
             System.out.println(post.curtidas + " curtidas ");
             if (post.comentarios.isEmpty()) {
@@ -265,64 +259,61 @@ public class RedeSocial {
             int acao = Validacoes.recebeAcaoPostagem();
             if (acao == 1) {
                 curtirPost(post);
-                exibePerfil(usuario);
-                menuDePerfis(usuario);
+                exibePerfil(perfilVisitado);
+                menuDePerfis(perfilVisitado);
             } else if (acao == 2) {
                 System.out.println("Digite seu comentário: ");
                 String comentario = sc.nextLine();
-                comentarPost(post, comentario, usuario);
-                menuDePerfis(usuario);
+                comentarPost(post, comentario);
+                menuDePerfis(perfilVisitado);
             } else if (acao == 4) {
-                menuDoUsuario(usuario);
+                menuDoUsuario(perfilVisitado);
                 break;
-            } else {
             }
         }
-        if (usuario.posts.isEmpty()) {
-            System.out.println(usuario.nome + " ainda não tem publicações.");
-            System.out.println("============================================");
-            menuDePerfis(usuario);
+        if (perfilVisitado.posts.isEmpty()) {
+            System.out.println(perfilVisitado.nome + " ainda não tem publicações.");
         } else {
             System.out.println("Não há mais postagens.");
-            System.out.println("============================================");
-            menuDePerfis(usuario);
         }
+        System.out.println("============================================");
+        menuDePerfis(perfilVisitado);
     }
 
-    public static void seguridores(Perfil usuario) {
+    public static void seguridores(Perfil perfilVisitado) {
         System.out.println("============================================");
-        if (usuario.seguidoPor.isEmpty()) {
+        if (perfilVisitado.seguidoPor.isEmpty()) {
             System.out.println("O usuário ainda não tem seguidores.");
             System.out.println();
         } else {
-            System.out.println("Seguidores de " + usuario.nome);
+            System.out.println("Seguidores de " + perfilVisitado.nome);
             System.out.println();
-            for (Perfil seguidor : usuario.seguidoPor) {
+            for (Perfil seguidor : perfilVisitado.seguidoPor) {
                 System.out.println(seguidor.nome);
                 System.out.println();
             }
         }
         System.out.println("============================================");
-        menuDePerfis(usuario);
+        menuDePerfis(perfilVisitado);
     }
 
-    public static void seguidos(Perfil usuario) {
+    public static void seguidos(Perfil perfilVisitado) {
         System.out.println("============================================");
-        if (usuario.seguidoPor.isEmpty()) {
+        if (perfilVisitado.seguidoPor.isEmpty()) {
             System.out.println("O usuário ainda não segue ninguém.");
         } else {
-            System.out.println(usuario.nome + " segue:");
+            System.out.println(perfilVisitado.nome + " segue:");
             System.out.println();
-            for (Perfil segue : usuario.segue) {
+            for (Perfil segue : perfilVisitado.segue) {
                 System.out.println(segue.nome);
                 System.out.println();
             }
         }
         System.out.println("============================================");
-        menuDePerfis(usuario);
+        menuDePerfis(perfilVisitado);
     }
 
-    public static void pesquisaUsuários(Perfil usuarioLogado) {
+    public static void pesquisaUsuarios() {
         System.out.println("Digite um nome ou um começo de nome: ");
         String busca = sc.nextLine();
         boolean usuarioEncontrado = false;
@@ -332,10 +323,10 @@ public class RedeSocial {
                 usuarioEncontrado = true;
             }
         }
-        if (usuarioEncontrado == true) {
+        if (usuarioEncontrado) {
             System.out.println();
             System.out.println("Digite o número do usuário que deseja ver o perfil.");
-            int posicao = Validacoes.recebePosicao(usuarioLogado);
+            int posicao = Validacoes.recebePosicao(usuarios);
             for (int i = 0; i < usuarios.size(); i++) {
                 if (i == posicao) {
                     exibePerfil(usuarios.get(i));
@@ -344,23 +335,37 @@ public class RedeSocial {
         } else {
             System.out.println("Não existem usuários que correspondem a busca.");
             System.out.println();
-            menuDoUsuario(usuarioLogado);
+            menuDoUsuario(perfilQueEstaLogado);
         }
     }
 
-    public static void adicionaUsuario(Perfil usuario) {
-        if (usuario != perfilQueEstaLogado && !(perfilQueEstaLogado.segue.contains(usuario))) {
-            perfilQueEstaLogado.segue.add(usuario);
-            usuario.seguidoPor.add(perfilQueEstaLogado);
-            System.out.println(usuario.nome + " foi adicionado!");
-        } else if (usuario == perfilQueEstaLogado) {
+    public static void adicionaUsuario(Perfil perfilVisitado) {
+        if (perfilVisitado != perfilQueEstaLogado && !(perfilQueEstaLogado.segue.contains(perfilVisitado))) {
+            perfilQueEstaLogado.segue.add(perfilVisitado);
+            perfilVisitado.seguidoPor.add(perfilQueEstaLogado);
+            System.out.println(perfilVisitado.nome + " foi adicionado!");
+        } else if (perfilVisitado == perfilQueEstaLogado) {
             System.out.println("Você está na sua página, navegue por outras para adicionar amigos.");
         } else {
             System.out.println("Vocês já são amigos.");
         }
 
         System.out.println();
-        exibePerfil(usuario);
+        exibePerfil(perfilVisitado);
+    }
+
+    public static void curtirPost(Post post) {
+        post.curtidas += 1;
+        System.out.println("Curtido!");
+        System.out.println();
+    }
+
+    public static void comentarPost(Post post, String comentario) {
+        post.comentarios.add(perfilQueEstaLogado.nome + " - " + dataFormatada.format(post.data) + " - " + comentario);
+    }
+
+    public static Date criaData() {
+        return new Date(System.currentTimeMillis());
     }
 
     public static void criaPerfisAutomaticamente() {
@@ -372,15 +377,5 @@ public class RedeSocial {
             Perfil novo = new Perfil(emails[i], nomes[i], senhas[i]);
             usuarios.add(novo);
         }
-    }
-
-    public static void curtirPost(Post post) {
-        post.curtidas += 1;
-        System.out.println("Curtido!");
-        System.out.println();
-    }
-
-    public static void comentarPost(Post post, String comentario, Perfil autorDoComentario) {
-        post.comentarios.add(autorDoComentario.nome + " - " + comentario);
     }
 }
