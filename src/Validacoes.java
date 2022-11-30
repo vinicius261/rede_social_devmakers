@@ -36,7 +36,7 @@ public class Validacoes {
         }
 
         for (Perfil usuario : RedeSocial.usuarios) {
-            if (usuario.login.equalsIgnoreCase(email)) {
+            if (usuario.getLOGIN(email)) {
                 System.out.println("Login já cadastrado.");
                 System.out.println();
                 RedeSocial.menuInicial();
