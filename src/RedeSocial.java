@@ -5,9 +5,6 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class RedeSocial {
-    // Olá Alan! Existe um método que adiciona três perfis assim que você cadastra o primeiro usuário.
-// Assim pode usar as funções extras de busca de usuário, seguir, comentar e curtir com menos trabalho.
-//Esses usuários começam com a letra "c", use ela para fazer as buscas. Valeu!
     static ArrayList<Perfil> usuarios = new ArrayList<>();
     static Perfil perfilQueEstaLogado;
     static SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
