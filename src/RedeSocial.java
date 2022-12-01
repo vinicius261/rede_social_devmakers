@@ -25,7 +25,7 @@ public class RedeSocial {
         System.out.println("================================================================");
         int opcao = Validacoes.respostaLogin();
 
-        if (usuarios.size() == 1 && opcao == 1) {
+        if (usuarios.size() > 1 && opcao == 1) {
             criaPerfisAutomaticamente();
         }
 
@@ -141,26 +141,24 @@ public class RedeSocial {
         System.out.println();
         if (perfilVisitado.getSeguidoPor().size() > 0) {
             for (Perfil seguidor : perfilVisitado.getSeguidoPor()) {
-                System.out.println("        " + seguidor.getNome());
-                System.out.println();
+                System.out.print("        " + seguidor.getNome()+" / ");
             }
         } else {
             System.out.println("        O usuário ainda não tem seguidores.");
-            System.out.println();
         }
+        System.out.println();
 
         System.out.println(perfilVisitado.getNome() + " segue:");
         System.out.println();
 
         if (perfilVisitado.getSegue().size() > 0) {
             for (Perfil segue : perfilVisitado.getSegue()) {
-                System.out.println("        " + segue.getNome());
-                System.out.println();
+                System.out.print("        " + segue.getNome()+" / ");
             }
         } else {
             System.out.println("        O usuário ainda não segue ninguém.");
-            System.out.println();
         }
+        System.out.println();
 
         System.out.println("============================================");
         menuDePerfis(perfilVisitado);
@@ -357,6 +355,8 @@ public class RedeSocial {
 
     public static void comentarPost(Post post, String comentario) {
         post.comentarios.add(perfilQueEstaLogado.getNome() + " - " + dataFormatada.format(post.getDATA()) + " - " + comentario);
+        System.out.println("Comentário feito!");
+        System.out.println();
     }
 
     public static Date criaData() {
