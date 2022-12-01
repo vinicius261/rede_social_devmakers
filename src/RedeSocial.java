@@ -355,7 +355,7 @@ public class RedeSocial {
 
     public static void comentarPost(Post post, String comentario) {
         post.comentarios.add(perfilQueEstaLogado.getNome() + " - " + dataFormatada.format(post.getDATA()) + " - " + comentario);
-        System.out.println("Comentário feito!");
+        System.out.println("Comentário feito!!");
         System.out.println();
     }
 
