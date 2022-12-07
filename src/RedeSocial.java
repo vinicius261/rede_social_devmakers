@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-public class RedeSocial {
+class RedeSocial {
     static ArrayList<Perfil> usuarios = new ArrayList<>();
     static Perfil perfilQueEstaLogado;
     static SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-    public static Scanner sc = new Scanner(System.in);
+    static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         System.out.println("Seja bem vindo a Rede Social!");
@@ -22,11 +22,11 @@ public class RedeSocial {
         sc.close();
     }
 
-    public static void menuInicial() {
+     static void menuInicial() {
         System.out.println("================================================================");
         System.out.println("Já tem uma conta?\n\n1 - Sim (Faça login)\n2 - Não (Cadastrar)\n\n0 - Sair (Encerrar programa)");
         System.out.println("================================================================");
-        int opcao = Validacoes.respostaLogin();
+        int opcao = EntradasEValidacoes.respostaLogin();
 
         if (usuarios.size() >= 1 && opcao == 1) {
             criaPerfisAutomaticamente();
@@ -34,14 +34,14 @@ public class RedeSocial {
 
         if (opcao == 1) {
             try {
-                login();
+                fazerLogin();
             } catch (UserNotFoundException | InvalidPasswordException e) {
             System.out.println(e.getMessage());
             System.out.println();
             menuInicial();
         }
         } else if (opcao == 2) {
-            novoUsuario();
+            cadastrarUsuario();
         } else {
             System.out.println("Programa encerrado, até logo!");
         }
@@ -52,10 +52,11 @@ public class RedeSocial {
         System.out.println("Bem vindo, " + usuarioLogado.getNome() + "!");
         System.out.println();
 
-        System.out.println("O que deseja fazer?\n\n1 - Fazer postagem  2 - Ir para sua timeline\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair");
+        System.out.println("O que deseja fazer?\n\n1 - Fazer postagem  2 - Ir para sua timeline" +
+                "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair");
         System.out.println("================================================================");
 
-        int opcao = Validacoes.respostaMenuUsuario();
+        int opcao = EntradasEValidacoes.respostaMenuUsuario();
 
         if (opcao == 1) {
             fazerPostagem(usuarioLogado);
@@ -106,7 +107,7 @@ public class RedeSocial {
         System.out.println("Para ver em detalhes desse perfil escolha uma opção: ");
         System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguidos    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + perfilVisitado.getNome());
         System.out.println("============================================");
-        int opcao = Validacoes.respostaMenu();
+        int opcao = EntradasEValidacoes.respostaMenu();
 
         if (opcao == 1) {
             exibePostagens(perfilVisitado);
@@ -154,8 +155,8 @@ public class RedeSocial {
         System.out.println(perfilVisitado.getNome() + " segue:");
         System.out.println();
 
-        if (perfilVisitado.getSegue().size() > 0) {
-            for (Perfil segue : perfilVisitado.getSegue()) {
+        if (perfilVisitado.getSeguindo().size() > 0) {
+            for (Perfil segue : perfilVisitado.getSeguindo()) {
                 System.out.print("        " + segue.getNome()+" / ");
             }
         } else {
@@ -167,7 +168,7 @@ public class RedeSocial {
         menuDePerfis(perfilVisitado);
     }
 
-    public static void login() {
+    public static void fazerLogin() {
         System.out.println("Insira seu login: ");
         String login = sc.nextLine();
         if (usuarios.isEmpty()) {
@@ -206,13 +207,13 @@ public class RedeSocial {
         }
     }
 
-    public static void novoUsuario() {
+    public static void cadastrarUsuario() {
         System.out.println("Insira seu email: ");
-        String login = Validacoes.recebeEmail();
+        String login = EntradasEValidacoes.recebeEmail();
         System.out.println("Insira seu nome: ");
-        String nome = Validacoes.recebeNome();
+        String nome = EntradasEValidacoes.recebeNome();
         System.out.println("Insira uma senha com  6 ou mais caracteres: ");
-        String senha = Validacoes.criaSenha();
+        String senha = EntradasEValidacoes.criaSenha();
         if (senha.equals("ERRO")) {
             System.out.println("A senha digitada não é válida.");
             RedeSocial.menuInicial();
@@ -240,11 +241,11 @@ public class RedeSocial {
             System.out.println(dataFormatada.format(post.getDATA()));
             System.out.println(post.getTEXTO());
             System.out.println(post.getCurtidas() + " curtidas ");
-            if (post.comentarios.isEmpty()) {
+            if (post.getComentarios().isEmpty()) {
                 System.out.println("Seja o primeiro a comentar");
             } else {
                 System.out.println("Cometários: ");
-                for (String comentarios : post.comentarios) {
+                for (String comentarios : post.getComentarios()) {
                     System.out.println(comentarios);
                 }
             }
@@ -252,7 +253,7 @@ public class RedeSocial {
             System.out.println("1 - Curtir  2 - Comentar 3 - Ver próxima  4 - Voltar para o menu");
             System.out.println();
             System.out.println("============================================");
-            int acao = Validacoes.recebeAcaoPostagem();
+            int acao = EntradasEValidacoes.recebeAcaoPostagem();
             if (acao == 1) {
                 curtirPost(post);
                 exibePerfil(perfilVisitado);
@@ -300,7 +301,7 @@ public class RedeSocial {
         } else {
             System.out.println(perfilVisitado.getNome() + " segue:");
             System.out.println();
-            for (Perfil segue : perfilVisitado.getSegue()) {
+            for (Perfil segue : perfilVisitado.getSeguindo()) {
                 System.out.println(segue.getNome());
                 System.out.println();
             }
@@ -322,7 +323,7 @@ public class RedeSocial {
         if (usuarioEncontrado) {
             System.out.println();
             System.out.println("Digite o número do usuário que deseja ver o perfil.");
-            int posicao = Validacoes.recebePosicao(usuarios);
+            int posicao = EntradasEValidacoes.recebePosicao(usuarios);
             for (int i = 0; i < usuarios.size(); i++) {
                 if (i == posicao) {
                     exibePerfil(usuarios.get(i));
@@ -336,8 +337,8 @@ public class RedeSocial {
     }
 
     public static void adicionaUsuario(Perfil perfilVisitado) {
-        if (perfilVisitado != perfilQueEstaLogado && !(perfilQueEstaLogado.getSegue().contains(perfilVisitado))) {
-            perfilQueEstaLogado.setSegue(perfilVisitado);
+        if (perfilVisitado != perfilQueEstaLogado && !(perfilQueEstaLogado.getSeguindo().contains(perfilVisitado))) {
+            perfilQueEstaLogado.setSeguindo(perfilVisitado);
             perfilVisitado.setSeguidoPor(perfilQueEstaLogado);
             System.out.println(perfilVisitado.getNome() + " foi adicionado!");
         } else if (perfilVisitado == perfilQueEstaLogado) {
@@ -357,7 +358,7 @@ public class RedeSocial {
     }
 
     public static void comentarPost(Post post, String comentario) {
-        post.comentarios.add(perfilQueEstaLogado.getNome() + " - " + dataFormatada.format(post.getDATA()) + " - " + comentario);
+        post.setComentarios(perfilQueEstaLogado, dataFormatada, comentario);
         System.out.println("Comentário feito!!");
         System.out.println();
     }

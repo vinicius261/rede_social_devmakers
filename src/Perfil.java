@@ -5,14 +5,17 @@ public class Perfil {
     private final String LOGIN;
     private final String SENHA;
 
-    private ArrayList<Post> posts = new ArrayList<>();
-    private ArrayList<Perfil> seguidoPor = new ArrayList<>();
-    private ArrayList<Perfil> segue = new ArrayList<>();
+    private ArrayList<Post> posts;
+    private ArrayList<Perfil> seguidoPor;
+    private ArrayList<Perfil> seguindo;
 
     public Perfil(String login, String nome, String senha) {
         this.LOGIN = login;
         this.NOME = nome;
         this.SENHA = senha;
+        this.posts = new ArrayList<>();
+        this.seguidoPor = new ArrayList<>();
+        this.seguindo = new ArrayList<>();
     }
 
     public String getSENHA() {
@@ -43,11 +46,11 @@ public class Perfil {
         this.seguidoPor.add(seguidoPor);
     }
 
-    public ArrayList<Perfil> getSegue() {
-        return segue;
+    public ArrayList<Perfil> getSeguindo() {
+        return seguindo;
     }
 
-    public void setSegue(Perfil segue) {
-        this.segue.add(segue);
+    public void setSeguindo(Perfil seguindo) {
+        this.seguindo.add(seguindo);
     }
 }

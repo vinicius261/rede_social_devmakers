@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Validacoes {
+public class EntradasEValidacoes {
 
     static Scanner sc = new Scanner(System.in);
     public static String recebeNome() {

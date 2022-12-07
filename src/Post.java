@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -5,13 +6,14 @@ public class Post {
     private final Perfil AUTOR;
     private final Date DATA;
     private final String TEXTO;
-    ArrayList<String> comentarios = new ArrayList<>();
+    private ArrayList<String> comentarios;
     private int curtidas;
 
-    public Post(Perfil autor, Date data, String texto) {
+    protected Post(Perfil autor, Date data, String texto) {
         this.AUTOR = autor;
         this.DATA = data;
         this.TEXTO = texto;
+        this.comentarios = new ArrayList<String>();
         autor.setPosts(this);
     }
 
@@ -33,5 +35,13 @@ public class Post {
 
     public void setCurtidas() {
         this.curtidas++;
+    }
+
+    public ArrayList<String> getComentarios(){
+        return this.comentarios;
+    }
+
+    public void setComentarios(Perfil perfilLogado, SimpleDateFormat dataFormatada, String comentario){
+        this.comentarios.add(perfilLogado.getNome() + " - " + dataFormatada.format(RedeSocial.criaData()) + " - " + comentario);
     }
 }
