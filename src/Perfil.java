@@ -15,12 +15,12 @@ public class Perfil {
         this.SENHA = senha;
     }
 
-    public boolean getSENHA(String senha) {
-        return senha.equals(this.SENHA);
+    public String getSENHA() {
+        return this.SENHA;
     }
 
-    public boolean getLOGIN(String login) {
-        return login.equalsIgnoreCase(this.LOGIN);
+    public String  getLOGIN() {
+        return this.LOGIN;
     }
 
     public String getNome() {

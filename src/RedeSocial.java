@@ -1,4 +1,7 @@
 
+import excecoes.InvalidPasswordException;
+import excecoes.UserNotFoundException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +28,7 @@ public class RedeSocial {
         System.out.println("================================================================");
         int opcao = Validacoes.respostaLogin();
 
-        if (usuarios.size() > 1 && opcao == 1) {
+        if (usuarios.size() >= 1 && opcao == 1) {
             criaPerfisAutomaticamente();
         }
 
@@ -106,11 +109,11 @@ public class RedeSocial {
         int opcao = Validacoes.respostaMenu();
 
         if (opcao == 1) {
-            postagens(perfilVisitado);
+            exibePostagens(perfilVisitado);
         } else if (opcao == 2) {
-            seguridores(perfilVisitado);
+            exibeSeguridores(perfilVisitado);
         } else if (opcao == 3) {
-            seguidos(perfilVisitado);
+            exibeSeguidos(perfilVisitado);
         } else if (opcao == 4) {
             adicionaUsuario(perfilVisitado);
         } else if (opcao == 5) {
@@ -174,10 +177,10 @@ public class RedeSocial {
         } else {
                 boolean usuarioEncontrado = false;
                 for (int i = 0; i < usuarios.size(); i++) {
-                    if (usuarios.get(i).getLOGIN(login)) {
+                    if (usuarios.get(i).getLOGIN().equalsIgnoreCase(login)) {
                         System.out.println("Olá " + usuarios.get(i).getNome() + " insira sua senha: ");
                         String senha = sc.nextLine();
-                        if (usuarios.get(i).getSENHA(senha)) {
+                        if (usuarios.get(i).getSENHA().equals(senha)) {
                             System.out.println("Login efetuado com sucesso.");
                             System.out.println();
                             perfilQueEstaLogado = usuarios.get(i);
@@ -187,7 +190,7 @@ public class RedeSocial {
                         } else {
                             System.out.println("Senha incorreta, tente novamente");
                             senha = sc.nextLine();
-                            if (usuarios.get(i).getSENHA(senha)) {
+                            if (usuarios.get(i).getSENHA().equals(senha)) {
                                 System.out.println("Login efetuado com sucesso.");
                                 perfilQueEstaLogado = usuarios.get(i);
                                 menuDoUsuario(usuarios.get(i));
@@ -228,7 +231,7 @@ public class RedeSocial {
         }
     }
 
-    public static void postagens(Perfil perfilVisitado) {
+    public static void exibePostagens(Perfil perfilVisitado) {
         System.out.println("============================================");
         System.out.println("Postagens de " + perfilVisitado.getNome());
         System.out.println();
@@ -273,7 +276,7 @@ public class RedeSocial {
         menuDePerfis(perfilVisitado);
     }
 
-    public static void seguridores(Perfil perfilVisitado) {
+    public static void exibeSeguridores(Perfil perfilVisitado) {
         System.out.println("============================================");
         if (perfilVisitado.getSeguidoPor().isEmpty()) {
             System.out.println("O usuário ainda não tem seguidores.");
@@ -290,7 +293,7 @@ public class RedeSocial {
         menuDePerfis(perfilVisitado);
     }
 
-    public static void seguidos(Perfil perfilVisitado) {
+    public static void exibeSeguidos(Perfil perfilVisitado) {
         System.out.println("============================================");
         if (perfilVisitado.getSeguidoPor().isEmpty()) {
             System.out.println("O usuário ainda não segue ninguém.");
