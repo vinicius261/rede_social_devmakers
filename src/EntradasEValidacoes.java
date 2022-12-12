@@ -1,5 +1,4 @@
-
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class EntradasEValidacoes {
@@ -48,7 +47,7 @@ public class EntradasEValidacoes {
         String confirmacao = sc.nextLine();
         if (!confirmacao.equalsIgnoreCase(email)) {
             System.out.println("Os emails digitados estão diferentes, tente mais uma vez.");
-            email = sc.nextLine();
+            confirmacao = sc.nextLine();
             if (!confirmacao.equalsIgnoreCase(email)) {
                 System.out.println("Os emails digitados estão diferentes.");
                 System.out.println();
@@ -112,7 +111,7 @@ public class EntradasEValidacoes {
             numero = respostaMenuUsuario();
         }
 
-        while (numero < 0 || numero > 4) {
+        while (numero < 0 || numero > 5) {
             System.out.println("Digite 1 para Postar, 2 para Timeline, 3 para buscar usuários, 4 para ver seu perfil ou 0 para Sair");
             System.out.println();
             numero = respostaMenuUsuario();
@@ -137,7 +136,7 @@ public class EntradasEValidacoes {
         return numero;
     }
 
-    public static int recebePosicao(ArrayList tamanhoArray) {
+    public static int recebePosicao(List tamanhoArray) {
         int posicao = 0;
 
         try {

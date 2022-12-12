@@ -1,22 +1,21 @@
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Post {
     private final Perfil AUTOR;
     private final Date DATA;
     private final String TEXTO;
-    private ArrayList<String> comentarios;
+    private List<String> comentarios;
     private int curtidas;
 
-    protected Post(Perfil autor, Date data, String texto) {
+    public Post(Perfil autor, Date data, String texto) {
         this.AUTOR = autor;
         this.DATA = data;
         this.TEXTO = texto;
         this.comentarios = new ArrayList<String>();
-        autor.setPosts(this);
     }
-
     public Perfil getAUTOR() {
         return AUTOR;
     }
@@ -37,7 +36,7 @@ public class Post {
         this.curtidas++;
     }
 
-    public ArrayList<String> getComentarios(){
+    public List<String> getComentarios(){
         return this.comentarios;
     }
 

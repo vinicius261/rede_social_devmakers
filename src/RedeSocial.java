@@ -5,10 +5,11 @@ import excecoes.UserNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 class RedeSocial {
-    static ArrayList<Perfil> usuarios = new ArrayList<>();
+    static List<Perfil> usuarios = new ArrayList<>();
     static Perfil perfilQueEstaLogado;
     static SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
     static Scanner sc = new Scanner(System.in);
@@ -22,7 +23,7 @@ class RedeSocial {
         sc.close();
     }
 
-     static void menuInicial() {
+    public static void menuInicial() {
         System.out.println("================================================================");
         System.out.println("Já tem uma conta?\n\n1 - Sim (Faça login)\n2 - Não (Cadastrar)\n\n0 - Sair (Encerrar programa)");
         System.out.println("================================================================");
@@ -36,10 +37,10 @@ class RedeSocial {
             try {
                 fazerLogin();
             } catch (UserNotFoundException | InvalidPasswordException e) {
-            System.out.println(e.getMessage());
-            System.out.println();
-            menuInicial();
-        }
+                System.out.println(e.getMessage());
+                System.out.println();
+                menuInicial();
+            }
         } else if (opcao == 2) {
             cadastrarUsuario();
         } else {
@@ -53,7 +54,8 @@ class RedeSocial {
         System.out.println();
 
         System.out.println("O que deseja fazer?\n\n1 - Fazer postagem  2 - Ir para sua timeline" +
-                "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair");
+                "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair\n\n\n" +
+                "Se você é famoso digite '5' para fazer a verificação de seu perfil");
         System.out.println("================================================================");
 
         int opcao = EntradasEValidacoes.respostaMenuUsuario();
@@ -61,17 +63,19 @@ class RedeSocial {
         if (opcao == 1) {
             fazerPostagem(usuarioLogado);
         } else if (opcao == 2) {
-            criaTimeline(usuarioLogado);
+            exibeTimeline(usuarioLogado);
         } else if (opcao == 3) {
             pesquisaUsuarios();
         } else if (opcao == 4) {
             exibePerfil(usuarioLogado);
+        } else if (opcao == 5) {
+            criaPerfilFamoso(usuarioLogado);
         } else {
             menuInicial();
         }
     }
 
-    public static void criaTimeline(Perfil usuarioLogado) {
+    public static void exibeTimeline(Perfil usuarioLogado) {
         System.out.println("================================================================");
         System.out.println("Suas publicações:");
         System.out.println();
@@ -80,7 +84,9 @@ class RedeSocial {
             System.out.println("Faça sua primeira publicação.");
         } else {
             for (Post post : usuarioLogado.getPosts()) {
-                System.out.println(dataFormatada.format(post.getDATA()) + " - " + "'" + post.getTEXTO() + "'");
+                System.out.println(dataFormatada.format(post.getDATA()) + " - " + "Curtidas: " +
+                        post.getCurtidas() + " Comentários: " + post.getComentarios().size() + "\n'" + post.getTEXTO() + "'");
+                System.out.println();
             }
             System.out.println();
             System.out.println("================================================================");
@@ -95,7 +101,8 @@ class RedeSocial {
         System.out.println("No que esta pensando? ");
         String texto = sc.nextLine();
 
-        new Post(usuarioLogado, data, texto);
+        Post novoPost = new Post(usuarioLogado, data, texto);
+        usuarioLogado.setPosts(novoPost);
         System.out.println("Publicado!");
         System.out.println();
 
@@ -114,27 +121,35 @@ class RedeSocial {
         } else if (opcao == 2) {
             exibeSeguridores(perfilVisitado);
         } else if (opcao == 3) {
-            exibeSeguidos(perfilVisitado);
+            exibeSeguindo(perfilVisitado);
         } else if (opcao == 4) {
             adicionaUsuario(perfilVisitado);
         } else if (opcao == 5) {
             menuDoUsuario(perfilQueEstaLogado);
         } else {
-            exibePerfil(perfilVisitado);
+            menuDoUsuario(perfilVisitado);
         }
     }
 
     public static void exibePerfil(Perfil perfilVisitado) {
         System.out.println("============================================");
-        System.out.println("Perfil de " + perfilVisitado.getNome());
+        if (perfilVisitado instanceof PerfilFamoso){
+            System.out.println("Perfil de " + perfilVisitado.getNome() + " *Perfil Verificado*");
+        }else {
+            System.out.println("Perfil de " + perfilVisitado.getNome());
+        }
         System.out.println();
+
+        if (perfilVisitado instanceof PerfilFamoso){
+            System.out.println("Esse perfil é famoso por: " + ((PerfilFamoso) perfilVisitado).getFamosoPor());
+            System.out.println();
+        }
 
         System.out.println("Postagens de " + perfilVisitado.getNome());
         System.out.println();
-
         if (perfilVisitado.getPosts().size() > 0) {
             for (Post post : perfilVisitado.getPosts()) {
-                System.out.println("        " + dataFormatada.format(post.getDATA()) +" - " + post.getTEXTO());
+                System.out.println("        " + dataFormatada.format(post.getDATA()) + " - " + post.getTEXTO());
                 System.out.println();
             }
         } else {
@@ -145,7 +160,7 @@ class RedeSocial {
         System.out.println();
         if (perfilVisitado.getSeguidoPor().size() > 0) {
             for (Perfil seguidor : perfilVisitado.getSeguidoPor()) {
-                System.out.print("        " + seguidor.getNome()+" / ");
+                System.out.print("        " + seguidor.getNome() + " / ");
             }
         } else {
             System.out.println("        O usuário ainda não tem seguidores.");
@@ -157,7 +172,7 @@ class RedeSocial {
 
         if (perfilVisitado.getSeguindo().size() > 0) {
             for (Perfil segue : perfilVisitado.getSeguindo()) {
-                System.out.print("        " + segue.getNome()+" / ");
+                System.out.print("        " + segue.getNome() + " / ");
             }
         } else {
             System.out.println("        O usuário ainda não segue ninguém.");
@@ -176,34 +191,34 @@ class RedeSocial {
             System.out.println();
             menuInicial();
         } else {
-                boolean usuarioEncontrado = false;
-                for (int i = 0; i < usuarios.size(); i++) {
-                    if (usuarios.get(i).getLOGIN().equalsIgnoreCase(login)) {
-                        System.out.println("Olá " + usuarios.get(i).getNome() + " insira sua senha: ");
-                        String senha = sc.nextLine();
+            boolean usuarioEncontrado = false;
+            for (int i = 0; i < usuarios.size(); i++) {
+                if (usuarios.get(i).getLOGIN().equalsIgnoreCase(login)) {
+                    System.out.println("Olá " + usuarios.get(i).getNome() + " insira sua senha: ");
+                    String senha = sc.nextLine();
+                    if (usuarios.get(i).getSENHA().equals(senha)) {
+                        System.out.println("Login efetuado com sucesso.");
+                        System.out.println();
+                        perfilQueEstaLogado = usuarios.get(i);
+                        menuDoUsuario(usuarios.get(i));
+                        usuarioEncontrado = true;
+                        break;
+                    } else {
+                        System.out.println("Senha incorreta, tente novamente");
+                        senha = sc.nextLine();
                         if (usuarios.get(i).getSENHA().equals(senha)) {
                             System.out.println("Login efetuado com sucesso.");
-                            System.out.println();
                             perfilQueEstaLogado = usuarios.get(i);
                             menuDoUsuario(usuarios.get(i));
-                            usuarioEncontrado = true;
-                            break;
                         } else {
-                            System.out.println("Senha incorreta, tente novamente");
-                            senha = sc.nextLine();
-                            if (usuarios.get(i).getSENHA().equals(senha)) {
-                                System.out.println("Login efetuado com sucesso.");
-                                perfilQueEstaLogado = usuarios.get(i);
-                                menuDoUsuario(usuarios.get(i));
-                            } else {
-                                throw new InvalidPasswordException("Senha incorreta.");
-                            }
+                            throw new InvalidPasswordException("Senha incorreta.");
                         }
                     }
                 }
-                    if (usuarioEncontrado == false) {
-                            throw new UserNotFoundException("Usuário não encontrado.");
-                        }
+            }
+            if (usuarioEncontrado == false) {
+                throw new UserNotFoundException("Usuário não encontrado.");
+            }
         }
     }
 
@@ -233,11 +248,16 @@ class RedeSocial {
     }
 
     public static void exibePostagens(Perfil perfilVisitado) {
+      exibePostagens(perfilVisitado,0);
+    }
+
+    public static void exibePostagens(Perfil perfilVisitado, int indexPostagem){
         System.out.println("============================================");
         System.out.println("Postagens de " + perfilVisitado.getNome());
         System.out.println();
 
-        for (Post post : perfilVisitado.getPosts()) {
+        for (int i = indexPostagem; i < perfilVisitado.getPosts().size(); i++ ) {
+            Post post = perfilVisitado.getPosts().get(i);
             System.out.println(dataFormatada.format(post.getDATA()));
             System.out.println(post.getTEXTO());
             System.out.println(post.getCurtidas() + " curtidas ");
@@ -256,13 +276,13 @@ class RedeSocial {
             int acao = EntradasEValidacoes.recebeAcaoPostagem();
             if (acao == 1) {
                 curtirPost(post);
-                exibePerfil(perfilVisitado);
+                exibePostagens(perfilVisitado, i);
                 menuDePerfis(perfilVisitado);
             } else if (acao == 2) {
                 System.out.println("Digite seu comentário: ");
                 String comentario = sc.nextLine();
                 comentarPost(post, comentario);
-                menuDePerfis(perfilVisitado);
+                exibePostagens(perfilVisitado, i);
             } else if (acao == 4) {
                 menuDoUsuario(perfilVisitado);
                 break;
@@ -294,7 +314,7 @@ class RedeSocial {
         menuDePerfis(perfilVisitado);
     }
 
-    public static void exibeSeguidos(Perfil perfilVisitado) {
+    public static void exibeSeguindo(Perfil perfilVisitado) {
         System.out.println("============================================");
         if (perfilVisitado.getSeguidoPor().isEmpty()) {
             System.out.println("O usuário ainda não segue ninguém.");
@@ -361,6 +381,23 @@ class RedeSocial {
         post.setComentarios(perfilQueEstaLogado, dataFormatada, comentario);
         System.out.println("Comentário feito!!");
         System.out.println();
+    }
+
+    private static void criaPerfilFamoso(Perfil perfil) {
+        System.out.println("Escreva brevemente o que te torna famoso.");
+        String famosoPor = sc.nextLine();
+
+        for (int i = 0; i < usuarios.size(); i++) {
+            if (usuarios.get(i).getLOGIN().equals(perfil.getLOGIN())) {
+                PerfilFamoso novo = new PerfilFamoso(perfil.getLOGIN(), perfil.getNome(), perfil.getSENHA(), famosoPor);
+                usuarios.remove(i);
+                usuarios.add(novo);
+                System.out.println("Parabéns agora sue perfil está em destaque!");
+                menuDoUsuario(novo);
+            }else{
+                menuDoUsuario(perfilQueEstaLogado);
+            }
+        }
     }
 
     public static Date criaData() {
