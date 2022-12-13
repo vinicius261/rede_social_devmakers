@@ -1,3 +1,8 @@
+package com.redesocial.post;
+
+import com.redesocial.perfis.Perfil;
+import com.redesocial.main.RedeSocial;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +21,13 @@ public class Post {
         this.TEXTO = texto;
         this.comentarios = new ArrayList<String>();
     }
+    public void adicionarCurtida() {
+        this.curtidas++;
+    }
+
+    public void adicionaComentario(Perfil perfilLogado, SimpleDateFormat dataFormatada, String comentario){
+        this.comentarios.add(perfilLogado.getNome() + " - " + dataFormatada.format(RedeSocial.criaData()) + " - " + comentario);
+    }
     public Perfil getAUTOR() {
         return AUTOR;
     }
@@ -32,15 +44,8 @@ public class Post {
         return curtidas;
     }
 
-    public void setCurtidas() {
-        this.curtidas++;
-    }
-
     public List<String> getComentarios(){
         return this.comentarios;
     }
 
-    public void setComentarios(Perfil perfilLogado, SimpleDateFormat dataFormatada, String comentario){
-        this.comentarios.add(perfilLogado.getNome() + " - " + dataFormatada.format(RedeSocial.criaData()) + " - " + comentario);
-    }
 }

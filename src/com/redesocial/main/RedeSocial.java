@@ -1,6 +1,11 @@
+package com.redesocial.main;
 
-import excecoes.InvalidPasswordException;
-import excecoes.UserNotFoundException;
+import com.redesocial.excecoes.InvalidPasswordException;
+import com.redesocial.excecoes.UserNotFoundException;
+import com.redesocial.perfis.Perfil;
+import com.redesocial.perfis.PerfilFamoso;
+import com.redesocial.post.Post;
+import com.redesocial.validacoes.EntradasEValidacoes;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,11 +13,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-class RedeSocial {
-    static List<Perfil> usuarios = new ArrayList<>();
+public class RedeSocial {
+    public static List<Perfil> usuarios = new ArrayList<>();
     static Perfil perfilQueEstaLogado;
     static SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
-    static Scanner sc = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         System.out.println("Seja bem vindo a Rede Social!");
@@ -20,7 +25,7 @@ class RedeSocial {
 
         menuInicial();
 
-        sc.close();
+        scanner.close();
     }
 
     public static void menuInicial() {
@@ -29,9 +34,7 @@ class RedeSocial {
         System.out.println("================================================================");
         int opcao = EntradasEValidacoes.respostaLogin();
 
-        if (usuarios.size() >= 1 && opcao == 1) {
-            criaPerfisAutomaticamente();
-        }
+        criaPerfisAutomaticamente(opcao);
 
         if (opcao == 1) {
             try {
@@ -61,7 +64,11 @@ class RedeSocial {
         int opcao = EntradasEValidacoes.respostaMenuUsuario();
 
         if (opcao == 1) {
-            fazerPostagem(usuarioLogado);
+            Date data = criaData();
+            System.out.println("No que esta pensando? ");
+            String texto = scanner.nextLine();
+            Perfil.fazerPostagem(usuarioLogado, data, texto);
+            menuDoUsuario(usuarioLogado);
         } else if (opcao == 2) {
             exibeTimeline(usuarioLogado);
         } else if (opcao == 3) {
@@ -69,7 +76,7 @@ class RedeSocial {
         } else if (opcao == 4) {
             exibePerfil(usuarioLogado);
         } else if (opcao == 5) {
-            criaPerfilFamoso(usuarioLogado);
+            tornaPerfilFamoso(usuarioLogado);
         } else {
             menuInicial();
         }
@@ -95,24 +102,24 @@ class RedeSocial {
         menuDoUsuario(usuarioLogado);
     }
 
-    public static void fazerPostagem(Perfil usuarioLogado) {
+    /*public static void fazerPostagem(Perfil usuarioLogado, Date data) {
         Date data = criaData();
 
         System.out.println("No que esta pensando? ");
         String texto = sc.nextLine();
 
         Post novoPost = new Post(usuarioLogado, data, texto);
-        usuarioLogado.setPosts(novoPost);
+        usuarioLogado.adicionaPost(novoPost);
         System.out.println("Publicado!");
         System.out.println();
 
         menuDoUsuario(usuarioLogado);
-    }
+    }*/
 
     public static void menuDePerfis(Perfil perfilVisitado) {
         System.out.println("============================================");
         System.out.println("Para ver em detalhes desse perfil escolha uma opção: ");
-        System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguidos    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + perfilVisitado.getNome());
+        System.out.println("1 - Postagens   2 - Seguidores\n3 - Seguindo    4 - Adicionar esse perfil\n5 - Voltar ao menu do usuário  6 - Voltar para o perfil de " + perfilVisitado.getNome());
         System.out.println("============================================");
         int opcao = EntradasEValidacoes.respostaMenu();
 
@@ -123,7 +130,8 @@ class RedeSocial {
         } else if (opcao == 3) {
             exibeSeguindo(perfilVisitado);
         } else if (opcao == 4) {
-            adicionaUsuario(perfilVisitado);
+            Perfil.adicionaUsuario(perfilVisitado, perfilQueEstaLogado);
+            exibePerfil(perfilVisitado);
         } else if (opcao == 5) {
             menuDoUsuario(perfilQueEstaLogado);
         } else {
@@ -185,7 +193,7 @@ class RedeSocial {
 
     public static void fazerLogin() {
         System.out.println("Insira seu login: ");
-        String login = sc.nextLine();
+        String login = scanner.nextLine();
         if (usuarios.isEmpty()) {
             System.out.println("Ainda não existem usuários cadastrados.");
             System.out.println();
@@ -195,7 +203,7 @@ class RedeSocial {
             for (int i = 0; i < usuarios.size(); i++) {
                 if (usuarios.get(i).getLOGIN().equalsIgnoreCase(login)) {
                     System.out.println("Olá " + usuarios.get(i).getNome() + " insira sua senha: ");
-                    String senha = sc.nextLine();
+                    String senha = scanner.nextLine();
                     if (usuarios.get(i).getSENHA().equals(senha)) {
                         System.out.println("Login efetuado com sucesso.");
                         System.out.println();
@@ -205,7 +213,7 @@ class RedeSocial {
                         break;
                     } else {
                         System.out.println("Senha incorreta, tente novamente");
-                        senha = sc.nextLine();
+                        senha = scanner.nextLine();
                         if (usuarios.get(i).getSENHA().equals(senha)) {
                             System.out.println("Login efetuado com sucesso.");
                             perfilQueEstaLogado = usuarios.get(i);
@@ -260,7 +268,13 @@ class RedeSocial {
             Post post = perfilVisitado.getPosts().get(i);
             System.out.println(dataFormatada.format(post.getDATA()));
             System.out.println(post.getTEXTO());
-            System.out.println(post.getCurtidas() + " curtidas ");
+            if(post.getCurtidas() == 0 ) {
+                System.out.println("Seja o primeiro a curtir");
+            }else if (post.getCurtidas() == 1) {
+                System.out.println(post.getCurtidas() + " curtida ");
+            } else{
+                System.out.println(post.getCurtidas() + " curtidas ");
+            }
             if (post.getComentarios().isEmpty()) {
                 System.out.println("Seja o primeiro a comentar");
             } else {
@@ -275,13 +289,13 @@ class RedeSocial {
             System.out.println("============================================");
             int acao = EntradasEValidacoes.recebeAcaoPostagem();
             if (acao == 1) {
-                curtirPost(post);
+                Perfil.curtirPost(post);
                 exibePostagens(perfilVisitado, i);
                 menuDePerfis(perfilVisitado);
             } else if (acao == 2) {
                 System.out.println("Digite seu comentário: ");
-                String comentario = sc.nextLine();
-                comentarPost(post, comentario);
+                String comentario = scanner.nextLine();
+                Perfil.comentarPost(post, comentario, perfilQueEstaLogado, dataFormatada);
                 exibePostagens(perfilVisitado, i);
             } else if (acao == 4) {
                 menuDoUsuario(perfilVisitado);
@@ -332,7 +346,7 @@ class RedeSocial {
 
     public static void pesquisaUsuarios() {
         System.out.println("Digite um nome ou um começo de nome: ");
-        String busca = sc.nextLine();
+        String busca = scanner.nextLine();
         boolean usuarioEncontrado = false;
         for (int i = 0; i < usuarios.size(); i++) {
             if (usuarios.get(i).getNome().toUpperCase().startsWith(busca.toUpperCase())) {
@@ -356,10 +370,10 @@ class RedeSocial {
         }
     }
 
-    public static void adicionaUsuario(Perfil perfilVisitado) {
+    /*public static void adicionaUsuario(Perfil perfilVisitado) {
         if (perfilVisitado != perfilQueEstaLogado && !(perfilQueEstaLogado.getSeguindo().contains(perfilVisitado))) {
-            perfilQueEstaLogado.setSeguindo(perfilVisitado);
-            perfilVisitado.setSeguidoPor(perfilQueEstaLogado);
+            perfilQueEstaLogado.adicionaSeguido(perfilVisitado);
+            perfilVisitado.adicionaSeguidor(perfilQueEstaLogado);
             System.out.println(perfilVisitado.getNome() + " foi adicionado!");
         } else if (perfilVisitado == perfilQueEstaLogado) {
             System.out.println("Você está na sua página, navegue por outras para adicionar amigos.");
@@ -369,23 +383,23 @@ class RedeSocial {
 
         System.out.println();
         exibePerfil(perfilVisitado);
-    }
+    }*/
 
-    public static void curtirPost(Post post) {
-        post.setCurtidas();
+    /*public static void curtirPost(Post post) {
+        post.adicionarCurtida();
         System.out.println("Curtido!");
         System.out.println();
-    }
+    }*/
 
-    public static void comentarPost(Post post, String comentario) {
-        post.setComentarios(perfilQueEstaLogado, dataFormatada, comentario);
+    /*public static void comentarPost(Post post, String comentario) {
+        post.adicionaComentario(perfilQueEstaLogado, dataFormatada, comentario);
         System.out.println("Comentário feito!!");
         System.out.println();
-    }
+    }*/
 
-    private static void criaPerfilFamoso(Perfil perfil) {
-        System.out.println("Escreva brevemente o que te torna famoso.");
-        String famosoPor = sc.nextLine();
+    private static void tornaPerfilFamoso(Perfil perfil) {
+        System.out.println("Escreva brevemente porque famoso.");
+        String famosoPor = scanner.nextLine();
 
         for (int i = 0; i < usuarios.size(); i++) {
             if (usuarios.get(i).getLOGIN().equals(perfil.getLOGIN())) {
@@ -404,14 +418,17 @@ class RedeSocial {
         return new Date(System.currentTimeMillis());
     }
 
-    public static void criaPerfisAutomaticamente() {
-        String[] emails = {"caio@gmail.com", "celia@gmail.com", "cassio@gmail.com"};
-        String[] nomes = {"Caio Santos", "Celia Garcia", "Cassio Ramos"};
-        String[] senhas = {"123456", "123456", "123456"};
+    public static void criaPerfisAutomaticamente(int opcao) {
+        if (usuarios.size() >= 1 && opcao == 1) {
+            String[] emails = {"caio@gmail.com", "celia@gmail.com", "cassio@gmail.com"};
+            String[] nomes = {"Caio Santos", "Celia Garcia", "Cassio Ramos"};
+            String[] senhas = {"123456", "123456", "123456"};
 
-        for (int i = 0; i < 3; i++) {
-            Perfil novo = new Perfil(emails[i], nomes[i], senhas[i]);
-            usuarios.add(novo);
+            for (int i = 0; i < 3; i++) {
+                Perfil novo = new Perfil(emails[i], nomes[i], senhas[i]);
+                usuarios.add(novo);
+            }
         }
+
     }
 }

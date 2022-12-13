@@ -1,3 +1,8 @@
+package com.redesocial.validacoes;
+
+import com.redesocial.main.RedeSocial;
+import com.redesocial.perfis.Perfil;
+
 import java.util.List;
 import java.util.Scanner;
 
