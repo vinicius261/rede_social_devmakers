@@ -20,7 +20,7 @@ public class RedeSocial {
 
     public static void main(String[] args) {
         /*São cadastrados automaticamente 3 usuários com a letra 'c' para facilitar
-        as funções de busca, adicionar, comentar e curtir.*/
+        as funções de busca, adicionar, comentar e curtir. */
 
         RedeSocial redeSocial = new RedeSocial();
 
