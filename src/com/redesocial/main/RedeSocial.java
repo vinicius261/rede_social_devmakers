@@ -28,11 +28,12 @@ public class RedeSocial {
         scanner.close();
     }
 
-    public RedeSocial(){
+    public RedeSocial() {
         listaDeUsuarios = new ArrayList<>();
         formatacaoDaData = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
         scanner = new Scanner(System.in);
     }
+
     public void menuInicial() {
         System.out.println("Seja bem vindo a Rede Social!\n");
         System.out.println("================================================================");
@@ -58,9 +59,9 @@ public class RedeSocial {
         }
     }
 
-    protected void menuDoUsuario(Perfil usuarioLogado) {
+    protected void menuDoUsuario() {
         System.out.println("================================================================");
-        System.out.println("Bem vindo, " + usuarioLogado.getNOME() + "!\n");
+        System.out.println("Bem vindo, " + perfilQueEstaLogado.getNOME() + "!\n");
 
         System.out.println("O que deseja fazer?\n\n1 - Fazer postagem  2 - Ir para sua timeline" +
                 "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair\n");
@@ -72,27 +73,27 @@ public class RedeSocial {
             Date data = criaData();
             System.out.println("No que esta pensando? ");
             String texto = scanner.nextLine();
-            Perfil.fazerPost(usuarioLogado, data, texto);
-            menuDoUsuario(usuarioLogado);
+            perfilQueEstaLogado.fazerPost(perfilQueEstaLogado, data, texto);
+            menuDoUsuario();
         } else if (opcao == 2) {
-            exibeTimeline(usuarioLogado);
+            exibeTimeline();
         } else if (opcao == 3) {
             pesquisaUsuarios();
         } else if (opcao == 4) {
-            exibePerfil(usuarioLogado);
+            exibePerfil(perfilQueEstaLogado);
         } else {
             menuInicial();
         }
     }
 
-    protected void exibeTimeline(Perfil usuarioLogado) {
+    protected void exibeTimeline() {
         System.out.println("================================================================");
         System.out.println("Suas publicações:\n");
 
-        if (usuarioLogado.getPosts().isEmpty()) {
+        if (perfilQueEstaLogado.getPosts().isEmpty()) {
             System.out.println("Faça sua primeira publicação.");
         } else {
-            for (Post post : usuarioLogado.getPosts()) {
+            for (Post post : perfilQueEstaLogado.getPosts()) {
                 System.out.println(formatacaoDaData.format(post.getDATA()) + " - " + "Curtidas: " +
                         post.getCurtidas() + " Comentários: " + post.getComentarios().size() + "\n'" + post.getTEXTO() + "'");
                 System.out.println();
@@ -102,7 +103,7 @@ public class RedeSocial {
         }
         System.out.println();
 
-        menuDoUsuario(usuarioLogado);
+        menuDoUsuario();
     }
 
     protected void menuDePerfis(Perfil perfilVisitado) {
@@ -121,12 +122,12 @@ public class RedeSocial {
         } else if (opcao == 3) {
             exibeSeguindo(perfilVisitado);
         } else if (opcao == 4) {
-            Perfil.adicionaUsuario(perfilVisitado, perfilQueEstaLogado);
+            perfilQueEstaLogado.adicionaUsuario(perfilVisitado, perfilQueEstaLogado);
             exibePerfil(perfilVisitado);
         } else if (opcao == 5) {
-            menuDoUsuario(perfilQueEstaLogado);
+            menuDoUsuario();
         } else {
-            menuDoUsuario(perfilVisitado);
+            exibePerfil(perfilVisitado);
         }
     }
 
@@ -188,7 +189,7 @@ public class RedeSocial {
                         System.out.println("Login efetuado com sucesso.");
                         System.out.println();
                         perfilQueEstaLogado = listaDeUsuarios.get(i);
-                        menuDoUsuario(perfilQueEstaLogado);
+                        menuDoUsuario();
                         usuarioEncontrado = true;
                         break;
                     } else {
@@ -197,7 +198,7 @@ public class RedeSocial {
                         if (listaDeUsuarios.get(i).verificaSenha(senha)) {
                             System.out.println("Login efetuado com sucesso.");
                             perfilQueEstaLogado = listaDeUsuarios.get(i);
-                            menuDoUsuario(perfilQueEstaLogado);
+                            menuDoUsuario();
                         } else {
                             throw new InvalidPasswordException("Senha incorreta.");
                         }
@@ -212,7 +213,7 @@ public class RedeSocial {
 
     protected void cadastrarUsuario() {
         System.out.println("Insira seu email: ");
-        String login = recebeEmail(listaDeUsuarios);
+        String login = recebeEmail();
 
         System.out.println("Insira seu nome: ");
         String nome = recebeNome();
@@ -267,21 +268,21 @@ public class RedeSocial {
                 }
             }
             System.out.println();
-            System.out.println("1 - Curtir  2 - Comentar 3 - Ver próxima  4 - Voltar para o menu");
+            System.out.println("1 - Curtir  2 - Comentar 3 - Ver próxima  4 - Voltar para o perfil");
             System.out.println();
             System.out.println("============================================");
             int acao = recebeAcaoPostagem();
             if (acao == 1) {
-                Perfil.curtirPost(post);
+                perfilQueEstaLogado.curtirPost(post);
                 exibePostagens(perfilVisitado, i);
                 menuDePerfis(perfilVisitado);
             } else if (acao == 2) {
                 System.out.println("Digite seu comentário: ");
                 String comentario = scanner.nextLine();
-                Perfil.comentarPost(post, comentario, perfilQueEstaLogado, formatacaoDaData);
+                perfilQueEstaLogado.comentarPost(post, comentario, perfilQueEstaLogado, formatacaoDaData);
                 exibePostagens(perfilVisitado, i);
             } else if (acao == 4) {
-                menuDoUsuario(perfilVisitado);
+                exibePerfil(perfilVisitado);
                 break;
             }
         }
@@ -354,7 +355,7 @@ public class RedeSocial {
         } else {
             System.out.println("Não existem usuários que correspondem a busca.");
             System.out.println();
-            menuDoUsuario(perfilQueEstaLogado);
+            menuDoUsuario();
         }
     }
 
@@ -391,7 +392,7 @@ public class RedeSocial {
         return nome;
     }
 
-    protected String recebeEmail(List<Perfil> usuarios) {
+    protected String recebeEmail() {
         String email = scanner.nextLine();
         String[] verificaEmail = email.split("@");
 
@@ -406,7 +407,7 @@ public class RedeSocial {
             }
         }
 
-        for (Perfil usuario : usuarios) {
+        for (Perfil usuario : listaDeUsuarios) {
             if (usuario.getLOGIN().equalsIgnoreCase(email)) {
                 System.out.println("Login já cadastrado.");
                 System.out.println();

@@ -25,26 +25,26 @@ public class Perfil {
         this.seguindo = new ArrayList<>();
     }
 
-    public static void fazerPost(Perfil usuarioLogado, Date data, String texto) {
-        Post novoPost = new Post(usuarioLogado, data, texto);
+    public void fazerPost(Perfil usuarioLogado, Date data, String texto) {
+        Post novoPost = new Post(this, data, texto);
         usuarioLogado.adicionaPost(novoPost);
         System.out.println("Publicado!");
         System.out.println();
     }
 
-    public static void curtirPost(Post post) {
+    public void curtirPost(Post post) {
         post.adicionarCurtida();
         System.out.println("Curtido!");
         System.out.println();
     }
 
-    public static void comentarPost(Post post, String comentario, Perfil perfilQueEstaLogado, SimpleDateFormat dataFormatada) {
+    public void comentarPost(Post post, String comentario, Perfil perfilQueEstaLogado, SimpleDateFormat dataFormatada) {
         post.adicionarComentario(perfilQueEstaLogado, dataFormatada, comentario);
         System.out.println("Comentário feito!!");
         System.out.println();
     }
 
-    public static void adicionaUsuario(Perfil perfilVisitado, Perfil perfilQueEstaLogado) {
+    public void adicionaUsuario(Perfil perfilVisitado, Perfil perfilQueEstaLogado) {
         if (perfilVisitado != perfilQueEstaLogado && !(perfilQueEstaLogado.getSeguindo().contains(perfilVisitado))) {
             perfilQueEstaLogado.adicionaSeguido(perfilVisitado);
             perfilVisitado.adicionaSeguidor(perfilQueEstaLogado);
