@@ -3,7 +3,6 @@ package com.redesocial.main;
 import com.redesocial.excecoes.InvalidPasswordException;
 import com.redesocial.excecoes.UserNotFoundException;
 import com.redesocial.perfis.Perfil;
-import com.redesocial.perfis.PerfilFamoso;
 import com.redesocial.post.Post;
 
 import java.text.SimpleDateFormat;
@@ -19,8 +18,8 @@ public class RedeSocial {
     private static Scanner scanner;
 
     public static void main(String[] args) {
-        /*São cadastrados automaticamente 3 usuários com a letra 'c' para facilitar
-        as funções de busca, adicionar, comentar e curtir. */
+        /*São cadastrados automaticamente 3 usuários com nome iniciando com a letra 'c' para facilitar
+        as funções de busca e adicionar usuários. */
 
         RedeSocial redeSocial = new RedeSocial();
 
@@ -40,7 +39,7 @@ public class RedeSocial {
         System.out.println("Já tem uma conta?\n\n1 - Sim (Faça login)\n2 - Não (Cadastrar)\n\n0 - Sair (Encerrar programa)");
         System.out.println("================================================================");
 
-        int opcao = respostaLogin();
+        int opcao = respostaMenuiIncial();
 
         criaPerfisAutomaticamente(opcao);
 
@@ -64,8 +63,7 @@ public class RedeSocial {
         System.out.println("Bem vindo, " + usuarioLogado.getNOME() + "!\n");
 
         System.out.println("O que deseja fazer?\n\n1 - Fazer postagem  2 - Ir para sua timeline" +
-                "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair\n\n\n" +
-                "Se você é famoso digite '5' para fazer a verificação de seu perfil");
+                "\n3 - Procurar usuários  4 - Ver seu perfil \n0 - Sair\n");
         System.out.println("================================================================");
 
         int opcao = respostaMenuUsuario();
@@ -82,8 +80,6 @@ public class RedeSocial {
             pesquisaUsuarios();
         } else if (opcao == 4) {
             exibePerfil(usuarioLogado);
-        } else if (opcao == 5) {
-            tornaPerfilFamoso(usuarioLogado);
         } else {
             menuInicial();
         }
@@ -136,17 +132,8 @@ public class RedeSocial {
 
     protected void exibePerfil(Perfil perfilVisitado) {
         System.out.println("============================================");
-        if (perfilVisitado instanceof PerfilFamoso) {
-            System.out.println("Perfil de " + perfilVisitado.getNOME() + " *Perfil Verificado*");
-        } else {
-            System.out.println("Perfil de " + perfilVisitado.getNOME());
-        }
+        System.out.println("Perfil de " + perfilVisitado.getNOME());
         System.out.println();
-
-        if (perfilVisitado instanceof PerfilFamoso) {
-            System.out.println("Esse perfil é famoso por: " + ((PerfilFamoso) perfilVisitado).getFamosoPor());
-            System.out.println();
-        }
 
         System.out.println("Postagens de " + perfilVisitado.getNOME());
         System.out.println();
@@ -201,7 +188,7 @@ public class RedeSocial {
                         System.out.println("Login efetuado com sucesso.");
                         System.out.println();
                         perfilQueEstaLogado = listaDeUsuarios.get(i);
-                        menuDoUsuario(listaDeUsuarios.get(i));
+                        menuDoUsuario(perfilQueEstaLogado);
                         usuarioEncontrado = true;
                         break;
                     } else {
@@ -210,7 +197,7 @@ public class RedeSocial {
                         if (listaDeUsuarios.get(i).verificaSenha(senha)) {
                             System.out.println("Login efetuado com sucesso.");
                             perfilQueEstaLogado = listaDeUsuarios.get(i);
-                            menuDoUsuario(listaDeUsuarios.get(i));
+                            menuDoUsuario(perfilQueEstaLogado);
                         } else {
                             throw new InvalidPasswordException("Senha incorreta.");
                         }
@@ -371,23 +358,6 @@ public class RedeSocial {
         }
     }
 
-    protected void tornaPerfilFamoso(Perfil perfil) {
-        System.out.println("Escreva brevemente porque é famoso:");
-        String famosoPor = scanner.nextLine();
-
-        for (int i = 0; i < listaDeUsuarios.size(); i++) {
-            if (listaDeUsuarios.get(i).getLOGIN().equals(perfil.getLOGIN())) {
-                PerfilFamoso novo = new PerfilFamoso(perfil.getLOGIN(), perfil.getNOME(), perfil.getSENHA(), famosoPor);
-                listaDeUsuarios.remove(i);
-                listaDeUsuarios.add(novo);
-                System.out.println("Parabéns agora sue perfil está em destaque!");
-                menuDoUsuario(novo);
-            } else {
-                menuDoUsuario(perfilQueEstaLogado);
-            }
-        }
-    }
-
     public Date criaData() {
         return new Date(System.currentTimeMillis());
     }
@@ -483,7 +453,7 @@ public class RedeSocial {
         return senha;
     }
 
-    protected int respostaLogin() {
+    protected int respostaMenuiIncial() {
         int numero = 0;
 
         try {
@@ -491,13 +461,13 @@ public class RedeSocial {
         } catch (NumberFormatException e) {
             System.out.println("Digite um número do menu.");
             System.out.println();
-            numero = respostaLogin();
+            numero = respostaMenuiIncial();
         }
 
         while (numero < 0 || numero > 2) {
             System.out.println("Digite 1 para Fazer login, 2 para Cadastrar ou 0 para Sair");
             System.out.println();
-            numero = respostaLogin();
+            numero = respostaMenuiIncial();
         }
         return numero;
     }
@@ -528,12 +498,12 @@ public class RedeSocial {
             numero = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Digite apenas números");
-            numero = respostaLogin();
+            numero = respostaMenuiIncial();
         }
 
         while (numero < 1 || numero > 6) {
             System.out.println("Digite uma opção válida.");
-            numero = respostaLogin();
+            numero = respostaMenuiIncial();
         }
         return numero;
     }
